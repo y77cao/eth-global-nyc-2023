@@ -1,10 +1,10 @@
 import { createWeb3Modal, defaultWagmiConfig } from "@web3modal/wagmi/react";
 import { WagmiConfig } from "wagmi";
-import { foundry } from "wagmi/chains";
+import { foundry, polygon, polygonMumbai } from "wagmi/chains";
 
-const projectId = "TODO";
+const projectId = "c8f668fb5e6e33e08278f9b699f3e292";
 
-const chains = [foundry];
+const chains = [polygonMumbai, polygon, foundry];
 const wagmiConfig = defaultWagmiConfig({
   chains,
   projectId,
