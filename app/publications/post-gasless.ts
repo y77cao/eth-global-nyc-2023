@@ -63,7 +63,7 @@ export const postGasless = async (createPostRequest: CreatePublicPostRequest) =>
 };
 
 export const createPostGasless = async () => {
-  const profileId = PROFILE_ID;
+  const profileId = "0x02dd";
   if (!profileId) {
     throw new Error('Must define PROFILE_ID in the .env to run this');
   }
@@ -79,14 +79,14 @@ export const createPostGasless = async () => {
     metadata_id: uuidv4(),
     description: 'Description',
     locale: 'en-US',
-    content: '@wagmi.test',
+    content: 'Who do you think is the most knowledgeable about crypto?',
     external_url: null,
     image: null,
     imageMimeType: null,
     name: 'Name',
     attributes: [],
-    tags: ['using_api_examples'],
-    appId: 'api_examples_github',
+    tags: ['positive_questions'],
+    appId: 'nyc23_andrius_yujia',
   });
   console.log(`${prefix}: ipfs result`, ipfsResult);
 
