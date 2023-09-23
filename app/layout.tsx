@@ -127,40 +127,11 @@ function Nav() {
       className="
     border-b flex
     flex-col sm:flex-row
-    items-start sm:items-center
+    items-center
     sm:pr-10
+    p-3
     "
     >
-      <div
-        className="
-        sm:px-8
-        py-3 px-4 flex flex-1 items-center p"
-      >
-        <Link href="/" className="mr-5 flex items-center">
-          <IconComponent className="opacity-85" size={19} />
-          <p className={`ml-2 mr-4 text-lg font-semibold`}>lenspwa</p>
-        </Link>
-        <Link
-          href="/"
-          className={`mr-5 text-sm ${pathname !== "/" && "opacity-50"}`}
-        >
-          <p>Home</p>
-        </Link>
-        <Link
-          href="/search"
-          className={`mr-5 text-sm ${pathname !== "/search" && "opacity-60"}`}
-        >
-          <p>Search</p>
-        </Link>
-        {wallet && (
-          <Link
-            href="/profile"
-            className={`mr-5 text-sm ${pathname !== "/search" && "opacity-60"}`}
-          >
-            <p>Profile</p>
-          </Link>
-        )}
-      </div>
       <div
         className="
         flex
@@ -191,7 +162,34 @@ function Nav() {
             <LogOut className="h-4 w-4 ml-3" />
           </Button>
         )}
-        <ModeToggle />
+      </div>
+      <div
+        className="
+        sm:px-8
+        pt-3 px-4 flex flex-1 items-center p"
+      >
+        <Link
+          href="/inbox"
+          className={`mr-5 text-sm ${pathname !== "/inbox" && "opacity-50"}`}
+        >
+          <p>Inbox</p>
+        </Link>
+        <Link
+          href="/"
+          className={`mr-5 text-sm ${pathname !== "/" && "opacity-60"}`}
+        >
+          <p>Questions</p>
+        </Link>
+        {wallet && (
+          <Link
+            href="/profile"
+            className={`mr-5 text-sm ${
+              pathname !== "/profile" && "opacity-60"
+            }`}
+          >
+            <p>Profile</p>
+          </Link>
+        )}
       </div>
     </nav>
   );

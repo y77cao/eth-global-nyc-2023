@@ -6,7 +6,6 @@ import { InjectedConnector } from "wagmi/connectors/injected";
 import {
   LensProvider as Provider,
   LensConfig,
-  development,
   sandbox,
 } from "@lens-protocol/react-web";
 import { bindings as wagmiBindings } from "@lens-protocol/wagmi";
