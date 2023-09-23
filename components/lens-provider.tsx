@@ -7,6 +7,7 @@ import {
   LensProvider as Provider,
   LensConfig,
   development,
+  sandbox,
 } from "@lens-protocol/react-web";
 import { bindings as wagmiBindings } from "@lens-protocol/wagmi";
 
@@ -30,7 +31,7 @@ const config = createConfig({
 
 const lensConfig: LensConfig = {
   bindings: wagmiBindings(),
-  environment: development,
+  environment: sandbox,
 };
 
 export function LensProvider({ children }: { children: React.ReactNode }) {
