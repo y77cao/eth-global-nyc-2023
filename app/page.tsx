@@ -109,8 +109,9 @@ export default function Home() {
         />
       </div>
 
-      <div className="absolute bottom-0 flex w-full space-x-3">
+      <div className="absolute bottom-0 flex w-full justify-between">
         <button
+          className="pl-5 pb-3"
           onClick={() =>
             currentQuestion > 0 ? setCurrentQuestion(currentQuestion - 1) : 0
           }
@@ -118,6 +119,7 @@ export default function Home() {
           Prev
         </button>
         <button
+          className="pr-5 pb-3"
           onClick={() =>
             currentQuestion < questions.length - 1
               ? setCurrentQuestion(currentQuestion + 1)
