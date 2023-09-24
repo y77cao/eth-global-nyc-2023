@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useExploreProfiles,
   useReaction,
@@ -44,6 +44,7 @@ import { InjectedConnector } from "wagmi/connectors/injected";
 export default function Home() {
   const [view, setView] = useState("profiles");
   const [questions, setQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
 
   const { address, isConnected } = useAccount();
   const { data: ensName } = useEnsName({ address });
@@ -76,7 +77,17 @@ export default function Home() {
     args: [5n],
   });
 
-  setQuestions([data1?.[0], data2?.[0], data3?.[0], data4?.[0], data5?.[0]]);
+  useEffect(() => {
+    if (data1 && data2 && data3 && data4 && data5) {
+      setQuestions([
+        data1?.[0],
+        data2?.[0],
+        data3?.[0],
+        data4?.[0],
+        data5?.[0],
+      ]);
+    }
+  }, [data1, data2, data3, data4, data5]);
 
   const { data, error } = useQuery(
     query,
