@@ -2,10 +2,6 @@
 import { useState } from "react";
 import {
   useExploreProfiles,
-  useExplorePublications,
-  PublicationTypes,
-  PublicationSortCriteria,
-  PublicationMainFocus,
   useReaction,
   useActiveProfile,
   ReactionTypes,
@@ -15,83 +11,68 @@ import {
   publicationId,
   useComments,
 } from "@lens-protocol/react-web";
-import {
-  Loader2,
-  ListMusic,
-  Newspaper,
-  PersonStanding,
-  Shapes,
-  Share,
-  Globe,
-  MessageSquare,
-  Repeat2,
-  Heart,
-  Grab,
-  ArrowRight,
-} from "lucide-react";
+import { MessageSquare, Repeat2, Heart, Grab, ArrowRight } from "lucide-react";
 import { questions as cryptoQuestions } from "@/lib/constants";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ReactMarkdown from "react-markdown";
 import { Question } from "@/components/ui/question";
+import {
+  useVotingContractQuestions,
+  useVotingContractTotalQuestions,
+} from "@/src/generated";
+import { useAccount, useConnect, useEnsName } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
 
 export default function Home() {
   const [view, setView] = useState("profiles");
-  const [questions, setQuestions] = useState(cryptoQuestions);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const {
-    data: publication,
-    loading,
-    hasMore,
-    next,
-  } = usePublications({
-    profileId: profileId("0x017f"),
-    limit: 10,
-  });
-  const publication2 = usePublication({
-    publicationId: publicationId("0x017f-0x02"),
+
+  const { address, isConnected } = useAccount();
+  const { data: ensName } = useEnsName({ address });
+  const { connect } = useConnect({
+    connector: new InjectedConnector(),
   });
 
-  console.log({ publication, publication2 });
+  const { data } = useVotingContractQuestions({
+    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+    args: [1n],
+  });
+
+  const { data: data2 } = useVotingContractQuestions({
+    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+    args: [2n],
+  });
+
+  const { data: data3 } = useVotingContractQuestions({
+    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+    args: [3n],
+  });
+
+  const { data: data4 } = useVotingContractQuestions({
+    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+    args: [4n],
+  });
+
+  const { data: data5 } = useVotingContractQuestions({
+    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+    args: [5n],
+  });
+
+  const [questions, setQuestions] = useState([
+    data?.[0],
+    data2?.[0],
+    data3?.[0],
+    data4?.[0],
+    data5?.[0],
+  ]);
+
+  console.log(questions);
+
+  const [currentQuestion, setCurrentQuestion] = useState(0);
 
   let { data: profiles, loading: loadingProfiles } = useExploreProfiles({
     limit: 50,
   }) as any;
 
   const { data: profile } = useActiveProfile();
-
-  // let { data: musicPubs, loading: loadingMusicPubs } = useExplorePublications({
-  //   limit: 25,
-  //   sortCriteria: PublicationSortCriteria.CuratedProfiles,
-  //   publicationTypes: [PublicationTypes.Post],
-  //   metadataFilter: {
-  //     restrictPublicationMainFocusTo: [PublicationMainFocus.Audio],
-  //   },
-  // }) as any;
-
-  // let { data: publications, loading: loadingPubs } = useExplorePublications({
-  //   limit: 25,
-  //   sortCriteria: PublicationSortCriteria.CuratedProfiles,
-  //   publicationTypes: [PublicationTypes.Post],
-  //   metadataFilter: {
-  //     restrictPublicationMainFocusTo: [PublicationMainFocus.Image],
-  //   },
-  // }) as any;
-
-  // profiles = profiles?.filter((p) => p.picture?.original?.url);
-
-  // publications = publications?.filter((p) => {
-  //   if (p.metadata && p.metadata.media[0]) {
-  //     if (p.metadata.media[0].original.mimeType.includes("image")) return true;
-  //     return false;
-  //   }
-  //   return true;
-  // });
-
-  // function openPublication(publication) {
-  //   window.open(`https://share.lens.xyz/p/${publication.id}`, "_blank");
-  // }
 
   return (
     <main

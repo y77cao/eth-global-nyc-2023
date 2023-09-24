@@ -1,5 +1,5 @@
 "use client";
-import { polygonMumbai, polygon } from "wagmi/chains";
+import { goerli } from "wagmi/chains";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { InjectedConnector } from "wagmi/connectors/injected";
@@ -9,10 +9,17 @@ import {
   sandbox,
 } from "@lens-protocol/react-web";
 import { bindings as wagmiBindings } from "@lens-protocol/wagmi";
+import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
 
 const { publicClient, webSocketPublicClient } = configureChains(
-  [polygonMumbai, polygon],
-  [publicProvider()]
+  [goerli],
+  [
+    jsonRpcProvider({
+      rpc: (chain) => ({
+        http: "https://eth-goerli.g.alchemy.com/v2/XTtxNP3NE-mNo33RVIyepMLmS8Z97cLX",
+      }),
+    }),
+  ]
 );
 
 const config = createConfig({
