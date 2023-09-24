@@ -1,0 +1,43 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IReverseRegistrar",
+  "sourceName": "contracts/ENSNameResolver.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "defaultResolver",
+      "outputs": [
+        {
+          "internalType": "contract IDefaultResolver",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "node",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
