@@ -14,7 +14,26 @@ import {
 import { MessageSquare, Repeat2, Heart, Grab, ArrowRight } from "lucide-react";
 import { questions as cryptoQuestions } from "@/lib/constants";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { init, useQuery, useGetBalanceOfToken } from "@airstack/airstack-react";
 import { Question } from "@/components/ui/question";
+
+init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY as string);
+
+const query = `query MyQuery($address: Identity!) {
+  SocialFollowings(
+    input: {filter: {identity: {_eq: $address}}, blockchain: ALL}
+  ) {
+    Following {
+      followingAddress {
+        addresses
+        socials {
+          dappName
+          profileName
+        }
+      }
+    }
+  }
+}`;
 import {
   useVotingContractQuestions,
   useVotingContractTotalQuestions,
@@ -24,6 +43,7 @@ import { InjectedConnector } from "wagmi/connectors/injected";
 
 export default function Home() {
   const [view, setView] = useState("profiles");
+  const [questions, setQuestions] = useState([]);
 
   const { address, isConnected } = useAccount();
   const { data: ensName } = useEnsName({ address });
@@ -31,7 +51,7 @@ export default function Home() {
     connector: new InjectedConnector(),
   });
 
-  const { data } = useVotingContractQuestions({
+  const { data: data1 } = useVotingContractQuestions({
     address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
     args: [1n],
   });
@@ -56,17 +76,13 @@ export default function Home() {
     args: [5n],
   });
 
-  const [questions, setQuestions] = useState([
-    data?.[0],
-    data2?.[0],
-    data3?.[0],
-    data4?.[0],
-    data5?.[0],
-  ]);
+  setQuestions([data1?.[0], data2?.[0], data3?.[0], data4?.[0], data5?.[0]]);
 
-  console.log(questions);
-
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const { data, error } = useQuery(
+    query,
+    { address: "0x439945b21b40b1cA89c135892fa1E3896Ff39Ff0" },
+    { cache: false }
+  );
 
   let { data: profiles, loading: loadingProfiles } = useExploreProfiles({
     limit: 50,

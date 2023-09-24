@@ -2,6 +2,7 @@
 import { goerli } from "wagmi/chains";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
+import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import {
   LensProvider as Provider,
