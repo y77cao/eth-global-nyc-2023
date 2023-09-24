@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "UbuntuRegular";
+  src: url("../public/Ubuntu-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -68,4 +75,8 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
+  background: #8b1fff;
+  font-family: "W95FARegular";
+  font-size: large;
+  color: white;
 }
