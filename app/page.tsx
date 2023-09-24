@@ -34,7 +34,26 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
+import { init, useQuery, useGetBalanceOfToken } from "@airstack/airstack-react";
 import { Question } from "@/components/ui/question";
+
+init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY as string);
+
+const query = `query MyQuery($address: Identity!) {
+  SocialFollowings(
+    input: {filter: {identity: {_eq: $address}}, blockchain: ALL}
+  ) {
+    Following {
+      followingAddress {
+        addresses
+        socials {
+          dappName
+          profileName
+        }
+      }
+    }
+  }
+}`;
 
 export default function Home() {
   const [view, setView] = useState("profiles");
@@ -52,8 +71,13 @@ export default function Home() {
   const publication2 = usePublication({
     publicationId: publicationId("0x017f-0x02"),
   });
+  const { data, error } = useQuery(
+    query,
+    { address: "0x439945b21b40b1cA89c135892fa1E3896Ff39Ff0" },
+    { cache: false }
+  );
 
-  console.log({ publication, publication2 });
+  console.log({ publication, publication2, data });
 
   let { data: profiles, loading: loadingProfiles } = useExploreProfiles({
     limit: 50,

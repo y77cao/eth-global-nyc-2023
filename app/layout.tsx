@@ -182,12 +182,12 @@ function Nav() {
         </Link>
         {wallet && (
           <Link
-            href="/profile"
+            href="/summary"
             className={`mr-5 text-sm ${
-              pathname !== "/profile" && "opacity-60"
+              pathname !== "/summary" && "opacity-60"
             }`}
           >
-            <p>Profile</p>
+            <p>Summary</p>
           </Link>
         )}
       </div>
