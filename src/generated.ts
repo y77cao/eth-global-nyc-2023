@@ -137,12 +137,34 @@ export const votingContractABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: 'questionId', internalType: 'uint256', type: 'uint256' }],
+    name: 'getQuestion',
+    outputs: [
+      { name: '', internalType: 'string', type: 'string' },
+      { name: '', internalType: 'string[10]', type: 'string[10]' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'bool', type: 'bool' },
+    ],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [
       { name: 'questionId', internalType: 'uint256', type: 'uint256' },
       { name: 'choice', internalType: 'string', type: 'string' },
     ],
     name: 'getVoteCount',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'questionId', internalType: 'uint256', type: 'uint256' }],
+    name: 'getVotesForQuestion',
+    outputs: [
+      { name: 'choices', internalType: 'string[10]', type: 'string[10]' },
+      { name: 'voteCounts', internalType: 'uint256[10]', type: 'uint256[10]' },
+    ],
   },
   {
     stateMutability: 'view',
@@ -219,6 +241,29 @@ export function useVotingContractRead<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link votingContractABI}__ and `functionName` set to `"getQuestion"`.
+ */
+export function useVotingContractGetQuestion<
+  TFunctionName extends 'getQuestion',
+  TSelectData = ReadContractResult<typeof votingContractABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof votingContractABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: votingContractABI,
+    functionName: 'getQuestion',
+    ...config,
+  } as UseContractReadConfig<
+    typeof votingContractABI,
+    TFunctionName,
+    TSelectData
+  >)
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link votingContractABI}__ and `functionName` set to `"getVoteCount"`.
  */
 export function useVotingContractGetVoteCount<
@@ -233,6 +278,29 @@ export function useVotingContractGetVoteCount<
   return useContractRead({
     abi: votingContractABI,
     functionName: 'getVoteCount',
+    ...config,
+  } as UseContractReadConfig<
+    typeof votingContractABI,
+    TFunctionName,
+    TSelectData
+  >)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link votingContractABI}__ and `functionName` set to `"getVotesForQuestion"`.
+ */
+export function useVotingContractGetVotesForQuestion<
+  TFunctionName extends 'getVotesForQuestion',
+  TSelectData = ReadContractResult<typeof votingContractABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof votingContractABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: votingContractABI,
+    functionName: 'getVotesForQuestion',
     ...config,
   } as UseContractReadConfig<
     typeof votingContractABI,

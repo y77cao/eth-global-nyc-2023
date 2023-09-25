@@ -22,33 +22,79 @@ contract VotingContract {
     mapping(uint256 => Question) public questions;
     mapping(address => Voter) public voters;
 
-    event QuestionCreated(uint256 indexed questionId, string text, string[] choices);
+    event QuestionCreated(
+        uint256 indexed questionId,
+        string text,
+        string[] choices
+    );
     event QuestionClosed(uint256 indexed questionId);
     event AnswerAdded(uint256 indexed questionId, string choice);
-    event Voted(address indexed voter, uint256 indexed questionId, string choice);
+    event Voted(
+        address indexed voter,
+        uint256 indexed questionId,
+        string choice
+    );
 
     constructor() {
         owner = msg.sender;
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can perform this operation");
+        require(
+            msg.sender == owner,
+            "Only the owner can perform this operation"
+        );
         _;
     }
 
-    function createQuestion(string memory text, string[] memory initialChoices) public onlyOwner {
+    function createQuestion(
+        string memory text,
+        string[] memory initialChoices
+    ) public onlyOwner {
         totalQuestions++;
         Question storage newQuestion = questions[totalQuestions];
         newQuestion.text = text;
         newQuestion.isOpen = true;
 
         for (uint256 i = 0; i < initialChoices.length; i++) {
-            require(newQuestion.choiceCount < 10, "Exceeded maximum number of choices");
+            require(
+                newQuestion.choiceCount < 10,
+                "Exceeded maximum number of choices"
+            );
             newQuestion.choices[newQuestion.choiceCount] = initialChoices[i];
             newQuestion.choiceCount++;
         }
 
         emit QuestionCreated(totalQuestions, text, initialChoices);
+    }
+
+    function getQuestion(
+        uint256 questionId
+    ) public view returns (string memory, string[10] memory, uint256, bool) {
+        require(questionId <= totalQuestions, "Invalid question ID");
+        Question storage question = questions[questionId];
+        return (
+            question.text,
+            question.choices,
+            question.choiceCount,
+            question.isOpen
+        );
+    }
+
+    function getVotesForQuestion(
+        uint256 questionId
+    )
+        public
+        view
+        returns (string[10] memory choices, uint256[10] memory voteCounts)
+    {
+        require(questionId <= totalQuestions, "Invalid question ID");
+        Question storage question = questions[questionId];
+
+        for (uint256 i = 0; i < question.choiceCount; i++) {
+            choices[i] = question.choices[i];
+            voteCounts[i] = question.votes[question.choices[i]];
+        }
     }
 
     function closeQuestion(uint256 questionId) public onlyOwner {
@@ -57,11 +103,17 @@ contract VotingContract {
         emit QuestionClosed(questionId);
     }
 
-    function addAnswerToQuestion(uint256 questionId, string memory choice) public onlyOwner {
+    function addAnswerToQuestion(
+        uint256 questionId,
+        string memory choice
+    ) public onlyOwner {
         require(questionId <= totalQuestions, "Invalid question ID");
         Question storage question = questions[questionId];
         require(question.isOpen, "This question is closed");
-        require(question.choiceCount < 10, "Exceeded maximum number of choices");
+        require(
+            question.choiceCount < 10,
+            "Exceeded maximum number of choices"
+        );
 
         question.choices[question.choiceCount] = choice;
         question.choiceCount++;
@@ -73,11 +125,17 @@ contract VotingContract {
         require(questionId <= totalQuestions, "Invalid question ID");
         Question storage question = questions[questionId];
         require(question.isOpen, "This question is closed");
-        require(!voters[msg.sender].hasVotedForQuestion[questionId], "You have already voted for this question");
+        require(
+            !voters[msg.sender].hasVotedForQuestion[questionId],
+            "You have already voted for this question"
+        );
 
         bool validChoice = false;
         for (uint256 i = 0; i < question.choiceCount; i++) {
-            if (keccak256(abi.encodePacked(question.choices[i])) == keccak256(abi.encodePacked(choice))) {
+            if (
+                keccak256(abi.encodePacked(question.choices[i])) ==
+                keccak256(abi.encodePacked(choice))
+            ) {
                 validChoice = true;
                 question.votes[choice]++;
                 break;
@@ -91,7 +149,10 @@ contract VotingContract {
         emit Voted(msg.sender, questionId, choice);
     }
 
-    function getVoteCount(uint256 questionId, string memory choice) public view returns (uint256) {
+    function getVoteCount(
+        uint256 questionId,
+        string memory choice
+    ) public view returns (uint256) {
         require(questionId <= totalQuestions, "Invalid question ID");
         return questions[questionId].votes[choice];
     }

@@ -12,10 +12,18 @@ import {
   useComments,
 } from "@lens-protocol/react-web";
 import { MessageSquare, Repeat2, Heart, Grab, ArrowRight } from "lucide-react";
-import { questions as cryptoQuestions } from "@/lib/constants";
+import { questions as cryptoQuestions, fakeSocialData } from "@/lib/constants";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { init, useQuery, useGetBalanceOfToken } from "@airstack/airstack-react";
 import { Question } from "@/components/ui/question";
+import {
+  useVotingContractAddAnswerToQuestion,
+  useVotingContractGetQuestion,
+  useVotingContractQuestions,
+  useVotingContractTotalQuestions,
+} from "@/src/generated";
+import { useAccount, useConnect, useEnsName, useWalletClient } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
 
 init(process.env.NEXT_PUBLIC_AIRSTACK_API_KEY as string);
 
@@ -34,73 +42,79 @@ const query = `query MyQuery($address: Identity!) {
     }
   }
 }`;
-import {
-  useVotingContractQuestions,
-  useVotingContractTotalQuestions,
-} from "@/src/generated";
-import { useAccount, useConnect, useEnsName } from "wagmi";
-import { InjectedConnector } from "wagmi/connectors/injected";
+
+const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string;
 
 export default function Home() {
   const [view, setView] = useState("profiles");
   const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
 
   const { address, isConnected } = useAccount();
+  const wallet = useWalletClient();
   const { data: ensName } = useEnsName({ address });
   const { connect } = useConnect({
     connector: new InjectedConnector(),
   });
 
-  const { data: data1 } = useVotingContractQuestions({
-    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+  const { data: data1 } = useVotingContractGetQuestion({
+    address: contractAddress,
+    args: [0n],
+  });
+
+  const { data: data2 } = useVotingContractGetQuestion({
+    address: contractAddress,
     args: [1n],
   });
 
-  const { data: data2 } = useVotingContractQuestions({
-    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+  const { data: data3 } = useVotingContractGetQuestion({
+    address: contractAddress,
     args: [2n],
   });
 
-  const { data: data3 } = useVotingContractQuestions({
-    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+  const { data: data4 } = useVotingContractGetQuestion({
+    address: contractAddress,
     args: [3n],
   });
 
-  const { data: data4 } = useVotingContractQuestions({
-    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
+  const { data: data5 } = useVotingContractGetQuestion({
+    address: contractAddress,
     args: [4n],
-  });
-
-  const { data: data5 } = useVotingContractQuestions({
-    address: "0xd17ad043395cFE036d297580a63F83dA8B4a1d0f",
-    args: [5n],
   });
 
   useEffect(() => {
     if (data1 && data2 && data3 && data4 && data5) {
-      setQuestions([
-        data1?.[0],
-        data2?.[0],
-        data3?.[0],
-        data4?.[0],
-        data5?.[0],
-      ]);
+      setQuestions([data1, data2, data3, data4, data5]);
     }
   }, [data1, data2, data3, data4, data5]);
 
-  const { data, error } = useQuery(
+  const { data: socialData, error } = useQuery(
     query,
-    { address: "0x439945b21b40b1cA89c135892fa1E3896Ff39Ff0" },
+    { address: wallet.data?.account.address },
     { cache: false }
   );
 
-  let { data: profiles, loading: loadingProfiles } = useExploreProfiles({
-    limit: 50,
-  }) as any;
+  useEffect(() => {
+    if (!questions || !questions.length) return;
+    const formattedAnswers = [];
+    const addressAndSocialData = (socialData || fakeSocialData).data
+      ?.SocialFollowings?.Following;
+    const firstFour = addressAndSocialData.slice(0, 4);
+    const addressToSocial = firstFour.map((ff) => {
+      const socialHandle = ff.followingAddress.socials.find(
+        (s) => s.dappName === "farcaster" || s.dappName === "lens"
+      );
+      return {
+        address: ff.followingAddress.addresses[0],
+        social: socialHandle.profileName,
+      };
+    });
+    console.log({ firstFour, addressToSocial });
+    setAnswers(addressToSocial);
+  }, [questions]);
 
-  const { data: profile } = useActiveProfile();
-
+  console.log({ questions });
   return (
     <main
       className="
@@ -113,7 +127,7 @@ export default function Home() {
       >
         <Question
           questionPrompt={questions[currentQuestion]}
-          answers={["a1", "a2", "a3", "a4"]}
+          answers={answers.map((a) => a.social)}
         />
       </div>
 
